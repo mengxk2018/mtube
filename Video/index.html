@@ -26,6 +26,7 @@
             padding: 0;
             margin: 0 10px;
             color: #333333;
+            overflow: overlay;
         }
 
         header {
@@ -113,7 +114,7 @@
 
         .input-group {
             position: relative;
-            display: inline-block;
+            display: block;
             float: right;
             right: 8px;
             top: -1px;
@@ -340,14 +341,14 @@
     <header>
         <a href="/" class="header-title">我的私房影院</a>
         <nav>
-            <a href="javascript:;" class="active">最新</a>
-            <a href="javascript:;">科幻</a>
-            <a href="javascript:;">动画</a>
+            <a href="javascript:;" class="active" data-type="">最新</a>
+            <a href="javascript:;" data-type="科幻">科幻</a>
+            <a href="javascript:;" data-type="动画">动画</a>
             <span class="nav-line"></span>
         </nav>
         <div class="input-group">
-            <input type="text" class="form-control">
-            <button type="button" class="btn">搜索</button>
+            <input type="text" class="form-control input-search">
+            <button type="button" class="btn btn-search">搜索</button>
         </div>
     </header>
     <div class="content">
@@ -388,6 +389,7 @@
             return str;
         };
         var videos = [];
+        var elems = [];
         $(function () {
             var initData = function () {
                 $.post('/video.ashx', { 'type': 'load' }, function (data) {
@@ -409,7 +411,7 @@
                     html += temp.format({
                         title: info[0],
                         video: info[1] ? player + 'movie/' + info[1] : '#',
-                        target: info[1] ? 'target="_blank"' : '',
+                        target: player ? '' : 'target="_blank"',
                         source: source,
                         src: '/assets/img/' + info[0] + '.jpg',
                         score: (8 + Math.random()).toFixed(1),
@@ -418,6 +420,7 @@
                     });
                 });
                 $('#mv-list').html(html);
+                elems = $('.mv-item');
             };
 
             var getVideoCode = function (name) {
@@ -428,25 +431,30 @@
                 return code;
             };
 
-            var initEvent = function () {
-                $(document).on('mouseover mouseout', 'nav a', function () {
-                    $('nav a').removeClass('active');
-                    $(this).addClass('active');
-                });
+            var filterVideo = function (type) {
+                if (type) {
+                    elems.fadeOut();
+                    elems.filter(i => videos[i].includes(type)).fadeIn();
+                }
+                else {
+                    elems.fadeIn();
+                }
+            };
 
+            var initEvent = function () {
                 $(document).on('mouseenter', 'nav a', function () {
-                    var start = $('nav a')[0].offsetLeft;
+                    var nav = $('nav a').removeClass('active');
+                    $(this).addClass('active');
+                    var start = nav[0].offsetLeft;
                     var current = this.offsetLeft;
                     var left = (current - start + 12.5);
                     $('.nav-line').css('left', left + 'px');
+                    filterVideo(this.getAttribute('data-type'));
                 });
 
-                // $(document).on('click', '.mv-item', function () {
-                //     var file = $(this).find('.mv-link').attr('data-href').split('/').pop();
-                //     $.post('video.ashx', { 'type': 'play', 'file': file }, function (data) {
-                //         if (data) alert(data);
-                //     });
-                // });
+                $(document).on('click', '.btn-search', function () {
+                    filterVideo($('.input-search').val());
+                });
 
                 $(document).on('click', '.btn-delete', function () {
                     var file = $(this).attr('data-href').split('/').pop();
