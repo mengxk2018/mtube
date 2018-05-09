@@ -1,0 +1,472 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>私房影院</title>
+    <link rel="shortcut icon" type="image/x-ico" href="favicon.ico">
+    <script type="text/javascript">
+        var data = [
+            '红海行动|[电影天堂www.dy2018.com]芳华HD高清国语中英双字.mp4',
+            '芳华|[电影天堂www.dy2018.com]芳华HD高清国语中英双字.mp4',
+            '黑豹',
+            '延边的女人',
+            '比得兔',
+            '猫与桃花源',
+            '帕丁顿熊2'
+        ];
+    </script>
+    <style type="text/css">
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 0;
+            margin: 0 10px;
+            color: #333333;
+        }
+
+        header {
+            position: relative;
+            max-width: 1128px;
+            margin: 0 auto;
+            padding: 15px 0;
+            height: 60px;
+        }
+
+        header .header-title {
+            font-size: 24px;
+            color: #333333;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        header .header-title:hover {
+            color: #35b5ff;
+        }
+
+        header .header-title:after {
+            content: "";
+            display: inline-block;
+            vertical-align: middle;
+            width: 8px;
+            height: 15px;
+            background: url(/assets/img/icon.png) no-repeat 0 -165px;
+            margin: -3px 10px 0;
+        }
+
+        header .header-title:hover:after {
+            background-position: -20px -165px;
+        }
+
+        nav {
+            position: relative;
+            display: inline-block;
+        }
+
+        nav a {
+            position: relative;
+            display: inline-block;
+            color: #333333;
+            font-size: 16px;
+            text-decoration: none;
+            height: 28px;
+            line-height: 24px;
+            margin: 0 10px;
+            outline: 0;
+            border-radius: 0;
+        }
+
+        nav a.active {
+            color: #35b5ff;
+        }
+
+        nav a:after {
+            display: none;
+            content: "";
+            opacity: 0;
+            width: 0;
+            height: 2px;
+            margin: 0 auto;
+            background: #35b5ff;
+            border-radius: 100px;
+        }
+
+        nav a.active:after {
+            opacity: 1;
+            width: 28px;
+            transition: all 0.25s ease-in-out;
+        }
+
+        nav .nav-line {
+            position: relative;
+            display: block;
+            width: 28px;
+            height: 2px;
+            top: -2px;
+            left: 12px;
+            background: #35b5ff;
+            transition: all 0.25s ease-in-out;
+        }
+
+        .input-group {
+            position: relative;
+            display: inline-block;
+            float: right;
+            right: 8px;
+            top: -1px;
+            margin-bottom: 2px;
+            height: 32px;
+            border: 1px solid #ddd;
+            transition: border-color ease-in-out .15s;
+        }
+
+        .input-group:hover {
+            border-color: #36b5ff;
+        }
+
+        .input-group .form-control,
+        .input-group .btn {
+            float: left;
+        }
+
+        .form-control {
+            display: inline-block;
+            font-size: 14px;
+            width: 180px;
+            height: 30px;
+            line-height: 24px;
+            padding: 3px 8px;
+            outline: 0;
+            border: 0;
+            border-radius: 2px;
+        }
+
+        .btn {
+            width: 60px;
+            height: 32px;
+            line-height: 24px;
+            font-size: 14px;
+            color: #ffffff;
+            cursor: pointer;
+            border: 0;
+            outline: 0;
+            top: -1px;
+            right: -1px;
+            padding: 3px 8px;
+            background: #36b5ff;
+            position: relative;
+            opacity: 1;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .content {
+            position: relative;
+            max-width: 1128px;
+            margin: 0 auto;
+        }
+
+        .content ul {
+            display: inline-block;
+            width: 100%;
+            min-height: 498px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .content ul li {
+            position: relative;
+            float: left;
+            margin-right: 8px;
+            margin-bottom: 10px;
+            transition: box-shadow .15s linear, -webkit-filter .3s ease-out;
+        }
+
+        .content ul li:hover {
+            box-shadow: 0 4px 8px rgba(40, 40, 40, .2);
+        }
+
+        .content ul li:hover img {
+            opacity: 0.9;
+        }
+
+        .content ul li:hover .mv-title a {
+            color: #35b5ff;
+        }
+
+        .mv-cover a {
+            display: block;
+            width: 180px;
+            position: relative;
+            height: 240px;
+            cursor: pointer;
+        }
+
+        .mv-cover img {
+            width: 100%;
+            height: 100%;
+        }
+
+        /*.mv-cover .mark {
+            position: absolute;
+            display: block;
+            top: 0;
+            left: 0;
+            width: 43px;
+            height: 43px;
+            background: url(/assets/img/icon2.png) no-repeat transparent;
+            background-position: -180px -60px;
+        }*/
+
+        .mv-cover .code {
+            position: absolute;
+            display: block;
+            top: 0;
+            right: 0;
+            color: #fff;
+            font-size: 12px;
+            height: 20px;
+            line-height: 20px;
+            right: 2px;
+            padding: 0 2px;
+            background-color: #36b5fff2;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .mv-info {
+            position: relative;
+            background: #f8f8f8;
+            padding: 5px;
+            border: 1px solid #f2f2f2;
+        }
+
+        .mv-info .mv-title {
+            height: 22px;
+            line-height: 22px;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .mv-info .mv-title a {
+            color: #222222;
+            text-decoration: none;
+            -webkit-user-select: none;
+            user-select: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 132px;
+            display: inline-block;
+        }
+
+        .mv-info .mv-title span {
+            font-size: 16px;
+            float: right;
+            color: #ff6200;
+        }
+
+        footer {
+            position: relative;
+            text-align: center;
+            font-size: 12px;
+            color: #666666;
+        }
+
+        footer p {
+            height: 30px;
+            line-height: 30px;
+            margin: 0;
+        }
+
+        @media (max-device-width: 480px) {
+            header {
+                position: fixed;
+                background: #fff;
+                width: calc(100% - 20px);
+                height: 90px;
+                z-index: 1;
+            }
+
+            nav {
+                display: block;
+                margin: 10px 0;
+            }
+
+            .input-group {
+                position: absolute;
+                float: right;
+                top: 15px;
+                right: 0;
+            }
+
+            .input-group .form-control {
+                width: 132px;
+            }
+
+            .input-group .btn {
+                width: 48px;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .content {
+                top: 90px;
+            }
+
+            .content ul li:nth-child(2n) {
+                margin-right: 0;
+            }
+
+            .mv-cover a {
+                width: 172px;
+                height: 229px;
+            }
+
+            .mv-info .mv-title a {
+                max-width: 126px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="/" class="header-title">我的私房影院</a>
+        <nav>
+            <a href="javascript:;" class="active">最新</a>
+            <a href="javascript:;">科幻</a>
+            <a href="javascript:;">动画</a>
+            <span class="nav-line"></span>
+        </nav>
+        <div class="input-group">
+            <input type="text" class="form-control">
+            <button type="button" class="btn">搜索</button>
+        </div>
+    </header>
+    <div class="content">
+        <ul class="mv-list" id="mv-list"></ul>
+    </div>
+    <footer>
+        <p>Copyright © 2018 私房影院 版权所有</p>
+    </footer>
+    <script type="text/html" id="temp-item">
+        <li class="mv-item">
+            <div class="mv-cover">
+                <a class="mv-link" href="{video}" {target}>
+                    <img src="{src}" alt="{title}" data-source="{source}">
+                    <span class="code{codeHidden}">{code}</span>
+                    <i class="mark"></i>
+                </a>
+            </div>
+            <div class="mv-info">
+                <p class="mv-title">
+                    <a href="#" title="{title}">{title}</a>
+                    <span>{score}</span>
+                </p>
+            </div>
+        </li>
+    </script>
+    <script src="assets/js/jquery-3.3.1.min.js"></script>
+    <script src="assets/js/cookie.min.js"></script>
+    <script type="text/javascript">
+        String.prototype.format = function (args) {
+            if (this === '' || this.indexOf('{') < 0 || args == null) return this.toString();
+            var str = '', strs = this.split(/({[^{^}]*})/);
+            var args = Array.isArray(args) || typeof args === 'object' ? args : Array.from(arguments);
+            strs.forEach(item => {
+                var value = args[item.replace(/\W/g, '')];
+                value = value !== undefined ? value.toString() : '';
+                str += item.indexOf('{') < 0 ? item : value;
+            });
+            return str;
+        };
+        var videos = [];
+        $(function () {
+            var initData = function () {
+                $.post('/video.ashx', { 'type': 'load' }, function (data) {
+                    var items = videos = JSON.parse(data);
+                    formatData(items);
+                });
+            };
+
+            var formatData = function (items) {
+                var html = '';
+                var temp = $('#temp-item').html();
+                items.forEach(item => {
+                    var source = item;
+                    var name = item.split(/\\/).pop();
+                    var code = getVideoCode(name);
+                    var player = cookie.has('player') ? 'player://' : '';
+                    item = '猫与桃花源|' + name;
+                    var info = item.split('|');
+                    html += temp.format({
+                        title: info[0],
+                        video: info[1] ? player + 'movie/' + info[1] : '#',
+                        target: info[1] ? 'target="_blank"' : '',
+                        source: source,
+                        src: '/assets/img/' + info[0] + '.jpg',
+                        score: (8 + Math.random()).toFixed(1),
+                        code: code,
+                        codeHidden: code ? '' : ' hidden'
+                    });
+                });
+                $('#mv-list').html(html);
+            };
+
+            var getVideoCode = function (name) {
+                var code = '';
+                if (name.includes('4K')) code = '4K';
+                if (name.includes('1080')) code = '1080P';
+                if (name.includes('720') || name.includes('1280')) code = '720P';
+                return code;
+            };
+
+            var initEvent = function () {
+                $(document).on('mouseover mouseout', 'nav a', function () {
+                    $('nav a').removeClass('active');
+                    $(this).addClass('active');
+                });
+
+                $(document).on('mouseenter', 'nav a', function () {
+                    var start = $('nav a')[0].offsetLeft;
+                    var current = this.offsetLeft;
+                    var left = (current - start + 12.5);
+                    $('.nav-line').css('left', left + 'px');
+                });
+
+                // $(document).on('click', '.mv-item', function () {
+                //     var file = $(this).find('.mv-link').attr('data-href').split('/').pop();
+                //     $.post('video.ashx', { 'type': 'play', 'file': file }, function (data) {
+                //         if (data) alert(data);
+                //     });
+                // });
+
+                $(document).on('click', '.btn-delete', function () {
+                    var file = $(this).attr('data-href').split('/').pop();
+                    if (confirm("确定要删除该视频吗？\r\n" + file)) {
+                        $(this).parents('.mv-item').remove();
+                        $.post('video.ashx', { 'type': 'delete', 'file': file }, function (data) {
+                            //if (data) alert(data);
+                        });
+                    }
+                });
+            };
+
+            var init = function () {
+                initEvent();
+                initData();
+            };
+
+            init();
+        });
+    </script>
+</body>
+
+</html>

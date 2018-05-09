@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2002
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Video", "Video\Video.csproj", "{5527921B-1273-48D8-B9A3-AE9848D40DAE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{12C7DAFB-D104-4093-BE83-1E2C5CF4C4D1} = {12C7DAFB-D104-4093-BE83-1E2C5CF4C4D1}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Player", "Player\Player.csproj", "{12C7DAFB-D104-4093-BE83-1E2C5CF4C4D1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5527921B-1273-48D8-B9A3-AE9848D40DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5527921B-1273-48D8-B9A3-AE9848D40DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5527921B-1273-48D8-B9A3-AE9848D40DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5527921B-1273-48D8-B9A3-AE9848D40DAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12C7DAFB-D104-4093-BE83-1E2C5CF4C4D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12C7DAFB-D104-4093-BE83-1E2C5CF4C4D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12C7DAFB-D104-4093-BE83-1E2C5CF4C4D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12C7DAFB-D104-4093-BE83-1E2C5CF4C4D1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2CEBC54E-AC2C-4AF3-9C33-FCCB4F5FD090}
+	EndGlobalSection
+EndGlobal
