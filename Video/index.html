@@ -6,17 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>私房影院</title>
     <link rel="shortcut icon" type="image/x-ico" href="favicon.ico">
-    <script type="text/javascript">
-        var data = [
-            '红海行动|[电影天堂www.dy2018.com]芳华HD高清国语中英双字.mp4',
-            '芳华|[电影天堂www.dy2018.com]芳华HD高清国语中英双字.mp4',
-            '黑豹',
-            '延边的女人',
-            '比得兔',
-            '猫与桃花源',
-            '帕丁顿熊2'
-        ];
-    </script>
     <style type="text/css">
         * {
             box-sizing: border-box;
@@ -146,12 +135,13 @@
             display: inline-block;
             font-size: 14px;
             width: 180px;
-            height: 30px;
+            height: 28px;
+            margin: 1px;
+            padding: 0px 6px;
             line-height: 24px;
             padding: 3px 8px;
             outline: 0;
             border: 0;
-            border-radius: 2px;
         }
 
         .btn {
@@ -164,7 +154,6 @@
             border: 0;
             outline: 0;
             top: -1px;
-            right: -1px;
             padding: 3px 8px;
             background: #36b5ff;
             position: relative;
@@ -216,7 +205,6 @@
             display: block;
             width: 180px;
             height: 240px;
-            cursor: pointer;
         }
 
         .mv-cover img {
@@ -268,8 +256,8 @@
         .mv-info .mv-title a {
             color: #222222;
             text-decoration: none;
-            -webkit-user-select: none;
-            user-select: none;
+            /* -webkit-user-select: none;
+            user-select: none; */
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -373,22 +361,23 @@
     <script type="text/html" id="temp-item">
         <li class="mv-item">
             <div class="mv-cover">
-                <a class="mv-link" href="{video}" {target}>
+                <a class="mv-link" href="{movie}" {target}>
                     <img src="{src}" alt="{title}" data-source="{source}">
                     <span class="code{codeHidden}">{code}</span>
                     <i class="mark"></i>
                 </a>
             </div>
             <div class="mv-info">
-                <p class="mv-title">
-                    <a href="#" title="{title}">{title}</a>
-                    <span>{score}</span>
+                <p class="mv-title" data-alias="{alias}">
+                    <a title="{title}">{title}</a>
+                    <span>{rating}</span>
                 </p>
             </div>
         </li>
     </script>
-    <script src="assets/js/jquery-3.3.1.min.js"></script>
-    <script src="assets/js/cookie.min.js"></script>
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/cookie.min.js"></script>
+    <script src="/assets/js/store.min.js"></script>
     <script type="text/javascript">
         String.prototype.format = function (args) {
             if (this === '' || this.indexOf('{') < 0 || args == null) return this.toString();
@@ -401,14 +390,18 @@
             });
             return str;
         };
-        var isMobile = navigator.userAgent.toLowerCase().includes('mobile');
-        var videos = [];
+        var movies = [];
         var elems = [];
         $(function () {
-            if (isMobile) $('.header-title').attr('href', '#');
+            var isMobile = navigator.userAgent.toLowerCase().includes('mobile');
+
+            var initParam = function () {
+                if (isMobile) $('.header-title').attr('href', '#');
+            };
+
             var initData = function () {
                 $.post('/video.ashx', { 'type': 'load' }, function (data) {
-                    var items = videos = JSON.parse(data);
+                    var items = movies = JSON.parse(data);
                     formatData(items);
                 });
             };
@@ -418,18 +411,29 @@
                 var temp = $('#temp-item').html();
                 items.forEach(item => {
                     var source = item;
-                    var name = item.split(/\\/).pop();
-                    var code = getVideoCode(name);
+                    var name = source.split(/\\/).pop();
+                    var code = getMovieCode(name);
+                    var alias = getMovieName(name);
+                    var title = alias;
+                    var src = '/assets/img/' + title + '.jpg';
+                    var rating = (8 + Math.random()).toFixed(1);
                     var player = cookie.has('player') ? 'player://' : '';
-                    item = '猫与桃花源|' + name;
-                    var info = item.split('|');
+
+                    var info = store.get(title);
+                    if (info) {
+                        title = info.name;
+                        src = '/data/' + info.name + '.jpg';
+                        rating = info.rating;
+                    }
+
                     html += temp.format({
-                        title: info[0],
-                        video: info[1] ? player + 'movie/' + info[1] : '#',
+                        title: title,
+                        movie: (player || '/') + 'movie/' + name,
                         target: player ? '' : 'target="_blank"',
+                        alias: alias,
                         source: source,
-                        src: '/assets/img/' + info[0] + '.jpg',
-                        score: (8 + Math.random()).toFixed(1),
+                        src: src,
+                        rating: rating,
                         code: code,
                         codeHidden: code ? '' : ' hidden'
                     });
@@ -438,7 +442,7 @@
                 elems = $('.mv-item');
             };
 
-            var getVideoCode = function (name) {
+            var getMovieCode = function (name) {
                 var code = '';
                 if (name.includes('4K')) code = '4K';
                 if (name.includes('1080')) code = '1080P';
@@ -446,21 +450,50 @@
                 return code;
             };
 
-            var filterVideo = function (type) {
+            var getMovieName = function (item) {
+                if (item.search(/BD/i) > -1)
+                    item = item.split(/BD/i)[0];
+                if (item.search(/HD/i) > -1)
+                    item = item.split(/HD/i)[0];
+                if (item.indexOf(' ') > -1)
+                    item = item.split(' ')[0];
+                if (item.indexOf('_') > -1)
+                    item = item.split('_')[0];
+                if (item.indexOf('[') > -1 || item.indexOf(']') > -1)
+                    item = item.replace(/\[.*?\]/g, '');
+                if (item.indexOf('.') === 0)
+                    item = item.substring(1, );
+                item = item.split('.')[0].trim();
+                if (item.indexOf('720') > -1)
+                    item = item.split('720')[0];
+                if (item.indexOf('1280') > -1)
+                    item = item.split('1280')[0];
+                if (item.indexOf('1080') > -1)
+                    item = item.split('1080')[0];
+                if (item.indexOf('高清') > -1)
+                    item = item.split('高清')[0];
+                if (item.indexOf('英语') > -1)
+                    item = item.split('英语')[0];
+                if (item.indexOf('未删') > -1)
+                    item = item.split('未删')[0];
+                return item.trim();
+            };
+
+            var saveMovieInfo = function (name) {
+                var info = JSON.parse(localStorage.getItem(name));
+                $.post('/video.ashx', { 'type': 'save', 'name': info.name, 'poster': info.poster, 'info': JSON.stringify(info, null, 2) }, function (data) {
+                    //if (data) alert(data);
+                });
+            };
+
+            var filterMovie = function (type) {
                 if (type) {
                     elems.hide();
-                    elems.filter(i => videos[i].includes(type)).fadeIn();
+                    elems.filter(i => movies[i].includes(type)).fadeIn();
                 }
                 else {
                     elems.fadeIn();
                 }
-            };
-
-            window.saveMovieInfo = function (name) {
-                var info = JSON.parse(localStorage.getItem(name));
-                $.post('/video.ashx', { 'type': 'save', 'name': info.name, 'poster': info.poster, 'info': JSON.stringify(info, null, 2) }, function (data) {
-                    var items = JSON.parse(data);
-                });
             };
 
             var initEvent = function () {
@@ -471,15 +504,15 @@
                     var current = this.offsetLeft;
                     var left = (current - start + 12.5);
                     $('.nav-line').css('left', left + 'px');
-                    filterVideo(this.getAttribute('data-type'));
+                    filterMovie(this.getAttribute('data-type'));
                 });
 
                 $(document).on('change', '.input-search', function () {
-                    filterVideo(this.value);
+                    filterMovie(this.value);
                 });
 
                 $(document).on('click', '.btn-search', function () {
-                    filterVideo($('.input-search').val());
+                    filterMovie($('.input-search').val());
                 });
 
                 $(document).on('click', '.btn-delete', function () {
@@ -498,6 +531,7 @@
             };
 
             var init = function () {
+                initParam();
                 initEvent();
                 initData();
             };
