@@ -456,6 +456,13 @@
                 }
             };
 
+            window.saveMovieInfo = function (name) {
+                var info = JSON.parse(localStorage.getItem(name));
+                $.post('/video.ashx', { 'type': 'save', 'name': info.name, 'poster': info.poster, 'info': JSON.stringify(info, null, 2) }, function (data) {
+                    var items = JSON.parse(data);
+                });
+            };
+
             var initEvent = function () {
                 $(document).on('mouseenter', 'nav a', function () {
                     var nav = $('nav a').removeClass('active');

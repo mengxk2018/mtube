@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 
 namespace Video
@@ -26,6 +28,12 @@ namespace Video
                 case "delete":
                     var deleteFile = request["file"] ?? "";
                     result = DeleteFile(deleteFile);
+                    break;
+                case "save":
+                    var name = request["name"] ?? "";
+                    var poster = request["poster"] ?? "";
+                    var info = request["info"] ?? "";
+                    result = SaveInfo(name, poster, info);
                     break;
             }
             response.Write(result);
@@ -60,6 +68,29 @@ namespace Video
                     File.Delete(path);
                     result = "success";
                 }
+            }
+            catch { }
+            return result;
+        }
+
+        private string SaveInfo(string name, string poster, string info)
+        {
+            var result = "";
+            try
+            {
+                var response = WebRequest.CreateHttp(poster).GetResponse();
+                var stream = response.GetResponseStream();
+                var image = Image.FromStream(stream);
+                var folder = HttpContext.Current.Server.MapPath("/data");
+
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                File.WriteAllText(Path.Combine(folder, name + ".json"), info);
+                image.Save(Path.Combine(folder, name + ".jpg"));
+
+                stream.Close();
+                response.Close();
+
+                result = "success";
             }
             catch { }
             return result;
