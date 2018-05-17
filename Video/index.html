@@ -208,8 +208,12 @@
         }
 
         .mv-cover img {
+            display: block;
             width: 100%;
             height: 100%;
+            color: #36b5ff;
+            background-image: url(/assets/img/default.jpg);
+            background-size: cover;
         }
 
         /*.mv-cover .mark {
@@ -359,7 +363,7 @@
         <p>Copyright © 2018 私房影院 版权所有</p>
     </footer>
     <script type="text/html" id="temp-item">
-        <li class="mv-item">
+        <li class="mv-item" data-index="{index}" data-alias="{alias}">
             <div class="mv-cover">
                 <a class="mv-link" href="{movie}" {target}>
                     <img src="{src}" alt="{title}" data-source="{source}">
@@ -409,13 +413,13 @@
             var formatData = function (items) {
                 var html = '';
                 var temp = $('#temp-item').html();
-                items.forEach(item => {
+                items.forEach((item, index) => {
                     var source = item;
                     var name = source.split(/\\/).pop();
                     var code = getMovieCode(name);
                     var alias = getMovieName(name);
                     var title = alias;
-                    var src = '/assets/img/' + title + '.jpg';
+                    var src = '/assets/img/default.jpg';
                     var rating = (8 + Math.random()).toFixed(1);
                     var player = cookie.has('player') ? 'player://' : '';
 
@@ -427,6 +431,7 @@
                     }
 
                     html += temp.format({
+                        index: index,
                         title: title,
                         movie: (player || '/') + 'movie/' + name,
                         target: player ? '' : 'target="_blank"',
@@ -477,6 +482,14 @@
                 if (item.indexOf('未删') > -1)
                     item = item.split('未删')[0];
                 return item.trim();
+            };
+
+            var getMovieInfo = function (items) {
+                items.each((i, item) => {
+                    $.get('/data/' + item.getAttribute('data-alias') + '.json', data => {
+                        store.set(data.name, data);
+                    });
+                });
             };
 
             var saveMovieInfo = function (name) {
