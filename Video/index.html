@@ -275,6 +275,10 @@
             color: #ff6200;
         }
 
+        .mv-info .mv-title span.rating-missing {
+            text-decoration: line-through;
+        }
+
         footer {
             position: relative;
             height: 30px;
@@ -367,14 +371,14 @@
             <div class="mv-cover">
                 <a class="mv-link" href="{movie}" {target}>
                     <img src="{src}" alt="{title}" data-source="{source}">
-                    <span class="code{codeHidden}">{code}</span>
+                    <span class="code {codeHidden}">{code}</span>
                     <i class="mark"></i>
                 </a>
             </div>
             <div class="mv-info">
                 <p class="mv-title" data-alias="{alias}">
                     <a title="{title}">{title}</a>
-                    <span>{rating}</span>
+                    <span {ratingMissing}>{rating}</span>
                 </p>
             </div>
         </li>
@@ -396,6 +400,7 @@
         };
         var movies = [];
         var elems = [];
+        var caches = [];
         $(function () {
             var isMobile = navigator.userAgent.toLowerCase().includes('mobile');
 
@@ -420,14 +425,17 @@
                     var alias = getMovieName(name);
                     var title = alias;
                     var src = '/data/' + title + '.jpg';
-                    var rating = (8 + Math.random()).toFixed(1);
+                    var rating = (6 + Math.random()).toFixed(1);
+                    var ratingMissing = 'class="rating-missing"';
                     var player = cookie.has('player') ? 'player://' : '';
 
                     var info = store.get(title);
                     if (info) {
                         title = info.name;
                         src = '/data/' + info.name + '.jpg';
-                        rating = info.rating;
+                        rating = info.rating || rating;
+                        ratingMissing = info.rating ? '' : ratingMissing;
+                        caches.push(info);
                     }
 
                     html += temp.format({
@@ -439,8 +447,9 @@
                         source: source,
                         src: src,
                         rating: rating,
+                        ratingMissing: ratingMissing,
                         code: code,
-                        codeHidden: code ? '' : ' hidden'
+                        codeHidden: code ? '' : 'hidden'
                     });
                 });
                 $('#mv-list').html(html);
@@ -501,10 +510,11 @@
                 });
             };
 
-            var filterMovie = function (type) {
-                if (type) {
+            var filterMovie = function (keyword) {
+                if (keyword) {
                     elems.hide();
-                    elems.filter(i => movies[i].includes(type)).fadeIn();
+                    var names = caches.filter(cache => Object.values(cache).some(value => value.includes(keyword))).map(item => item.name);
+                    elems.filter((i, elem) => names.includes(elem.getAttribute('data-alias')) || $(elem).find('.mv-link').attr('href').includes(keyword)).fadeIn();
                 }
                 else {
                     elems.fadeIn();
