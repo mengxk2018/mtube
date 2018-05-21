@@ -238,6 +238,7 @@
             line-height: 20px;
             right: 2px;
             padding: 0 2px;
+            background-color: rgba(54, 181, 255, 0.95);
             background-color: #36b5fff2;
             border-radius: 0 0 4px 4px;
         }
@@ -343,6 +344,16 @@
                 margin-top: 60px;
             }
         }
+
+        @media (max-device-width: 360px) {
+            .input-group .form-control {
+                width: 120px;
+            }
+            .mv-cover a {
+                width: 165px;
+                height: 220px;
+            }
+        }
     </style>
 </head>
 
@@ -400,7 +411,7 @@
         };
         var movies = [];
         var elems = [];
-        var caches = [];
+        var stores = [];
         $(function () {
             var isMobile = navigator.userAgent.toLowerCase().includes('mobile');
 
@@ -435,7 +446,7 @@
                         src = '/data/' + info.name + '.jpg';
                         rating = info.rating || rating;
                         ratingMissing = info.rating ? '' : ratingMissing;
-                        caches.push(info);
+                        stores.push(info);
                     }
 
                     html += temp.format({
@@ -454,6 +465,7 @@
                 });
                 $('#mv-list').html(html);
                 elems = $('.mv-item');
+                getMovieInfo(elems);
             };
 
             var getMovieCode = function (name) {
@@ -498,6 +510,7 @@
             var getMovieInfo = function (items) {
                 items.each((i, item) => {
                     $.get('/data/' + item.getAttribute('data-alias') + '.json', data => {
+                        if (store.has(data.name)) return;
                         store.set(data.name, data);
                     });
                 });
@@ -513,7 +526,7 @@
             var filterMovie = function (keyword) {
                 if (keyword) {
                     elems.hide();
-                    var names = caches.filter(cache => Object.values(cache).some(value => value.includes(keyword))).map(item => item.name);
+                    var names = stores.filter(cache => Object.values(cache).some(value => value.includes(keyword))).map(item => item.name);
                     elems.filter((i, elem) => names.includes(elem.getAttribute('data-alias')) || $(elem).find('.mv-link').attr('href').includes(keyword)).fadeIn();
                 }
                 else {
