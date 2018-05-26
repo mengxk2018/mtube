@@ -526,7 +526,12 @@
             var filterMovie = function (keyword) {
                 if (keyword) {
                     elems.hide();
-                    var names = stores.filter(cache => Object.values(cache).some(value => value.includes(keyword))).map(item => item.name);
+                    var names = [];
+                    if (keyword.includes('miss')) {
+                        names = $('.rating-missing').map((i, item) => item.previousElementSibling.innerText).toArray();
+                    } else {
+                        names = stores.filter(cache => Object.values(cache).some(value => value.includes(keyword))).map(item => item.name);
+                    }
                     elems.filter((i, elem) => names.includes(elem.getAttribute('data-alias')) || $(elem).find('.mv-link').attr('href').includes(keyword)).fadeIn();
                 }
                 else {
