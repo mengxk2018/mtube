@@ -444,11 +444,11 @@
                 });
             };
 
-            var formatData = function (items) {
+            var formatData = async function (items) {
                 var html = '';
                 var temp = $('#temp-item').html();
-                items.forEach((item, index) => {
-                    var source = item;
+                for (var index = 0; index < items.length; index++) {
+                    var source = items[index];
                     var name = source.split(/\\/).pop();
                     var code = getMovieCode(name);
                     var alias = getMovieName(name);
@@ -459,6 +459,10 @@
                     var player = cookie.has('player') ? 'player://' : '';
 
                     var info = store.get(title);
+                    if (!info) {
+                        info = await getMovieInfo(title).then(result => result);
+                        store.set(title, info);
+                    }
                     if (info) {
                         title = info.name;
                         src = '/data/' + info.name + '.jpg';
@@ -480,10 +484,9 @@
                         code: code,
                         codeHidden: code ? '' : 'hidden'
                     });
-                });
+                }
                 $('#mv-list').html(html);
                 elems = $('.mv-item');
-                getMovieInfo(elems);
             };
 
             var getMovieCode = function (name) {
@@ -525,13 +528,8 @@
                 return item.trim();
             };
 
-            var getMovieInfo = function (items) {
-                items.each((i, item) => {
-                    $.get('/data/' + item.getAttribute('data-alias') + '.json', data => {
-                        if (store.has(data.name)) return;
-                        store.set(data.name, data);
-                    });
-                });
+            var getMovieInfo = async function (name) {
+                return await $.get('/data/' + name + '.json').then(result => result).catch(error => null);
             };
 
             var saveMovieInfo = function (name) {
