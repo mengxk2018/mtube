@@ -466,8 +466,8 @@
                     if (info) {
                         title = info.name;
                         src = '/data/' + info.name + '.jpg';
-                        rating = info.rating || rating;
-                        ratingMissing = info.rating ? '' : ratingMissing;
+                        rating = !isNaN(info.rating) ? info.rating : rating;
+                        ratingMissing = !isNaN(info.rating) ? '' : ratingMissing;
                         stores.push(info);
                     }
 
